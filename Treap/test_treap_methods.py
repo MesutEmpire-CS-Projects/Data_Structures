@@ -32,18 +32,16 @@ class TestTreapMethods(unittest.TestCase):
                 i += 1
 
     def test_split(self):
-        left, right = self.my_treap.split(40)
-        self.assertIsNotNone(left)
-        self.assertIsNotNone(right)
-        self.assertTrue(len(left), 4)
-        self.assertTrue(len(right), 3)
-        for num in left:
-            print(num)
+        left_treap, right_treap = self.my_treap.split(40)
+        self.assertIsNotNone(left_treap)
+        self.assertIsNotNone(right_treap)
+        self.assertTrue(len(left_treap), 4)
+        self.assertTrue(len(right_treap), 3)
 
-        print()
-
-        for num in right:
-            print(num)
+    def test_merge(self):
+        left_treap, right_treap = self.my_treap.split(40)
+        merged_treap = Treap.merge(left_treap, right_treap)
+        self.assertEqual(len(merged_treap), len(left_treap) + len(right_treap))
 
 
 if __name__ == '__main__':
