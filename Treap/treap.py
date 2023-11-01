@@ -1,5 +1,7 @@
 import random
 
+from typing_extensions import Self
+
 from Treap.stack import Stack
 
 
@@ -35,9 +37,20 @@ class Treap:
                 self._stack.push(root)
                 self._traverse_to_min_node(root.left)
 
-    def __init__(self):
-        self.root = None
-        self._size = 0
+    def __init__(self, root: TreapNode | None = None):
+        self.root = root
+        if self.root is not None:
+            count = 0
+            treap_iterator = self._TreapIterator(root)
+            try:
+                while True:
+                    treap_iterator.__next__()
+                    count += 1
+            except StopIteration:
+                pass
+            self._size = count
+        else:
+            self._size = 0
 
     def __len__(self):
         return self._size
@@ -107,6 +120,10 @@ class Treap:
         self._size -= 1
         return root
 
+    def split(self, key) -> tuple[Self, Self]:
+        left, right = self._split(self.root, key)
+        return Treap(left), Treap(right)
+
     def _split(self, root, key):
         if root is None:
             return None, None
@@ -158,9 +175,6 @@ class Treap:
 
     def delete(self, key):
         self.root = self._delete(self.root, key)
-
-    def split(self, key):
-        return self._split(self.root, key)
 
     def search(self, key):
         return self._search(self.root, key)
