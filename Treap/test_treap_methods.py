@@ -12,9 +12,10 @@ class TestTreapMethods(unittest.TestCase):
         self.my_treap.insert(40)
         self.my_treap.insert(50)
         self.my_treap.insert(60)
+        self.my_treap.insert(70)
 
     def test_len(self):
-        self.assertEqual(len(self.my_treap), 6)
+        self.assertEqual(len(self.my_treap), 7)
 
     def test_iterator(self):
         my_nums = [10, 20, 30, 40, 50, 60]
@@ -34,6 +35,15 @@ class TestTreapMethods(unittest.TestCase):
         left, right = self.my_treap.split(40)
         self.assertIsNotNone(left)
         self.assertIsNotNone(right)
+        self.assertTrue(len(left), 4)
+        self.assertTrue(len(right), 3)
+        for num in left:
+            print(num)
+
+        print()
+
+        for num in right:
+            print(num)
 
 
 if __name__ == '__main__':
