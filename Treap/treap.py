@@ -137,18 +137,24 @@ class Treap:
             root.right = left
             return root, right
 
-    def merge(self, left, right):
-        if not left:
-            return right
-        if not right:
-            return left
+    @classmethod
+    def merge(cls, left_treap: Self, right_treap: Self) -> Self:
+        merged_root = cls._merge(left_treap.root, right_treap.root)
+        return Treap(merged_root)
 
-        if left.priority > right.priority:
-            left.right = self.merge(left.right, right)
-            return left
+    @classmethod
+    def _merge(cls, left_root: TreapNode | None, right_root: TreapNode | None) -> TreapNode | None:
+        if not left_root:
+            return right_root
+        if not right_root:
+            return left_root
+
+        if left_root.priority > right_root.priority:
+            left_root.right = cls._merge(left_root.right, right_root)
+            return left_root
         else:
-            right.left = self.merge(left, right.left)
-            return right
+            right_root.left = cls._merge(left_root, right_root.left)
+            return right_root
 
     def _search(self, root, key):
         if root is None or root.key == key:
