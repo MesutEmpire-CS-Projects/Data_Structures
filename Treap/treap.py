@@ -38,8 +38,19 @@ class Treap:
                 self._traverse_to_min_node(root.left)
 
     def __init__(self, root: TreapNode | None = None):
+        """
+        Creates a new Treap.
+
+        The additional optional parameter is used by
+        the split and merge methods to create new a Treap
+        from a given root node.
+        This parameter is not to be filled in by client code
+        """
         self.root = root
         if self.root is not None:
+            # Calculating the length of a Treap given a root node is as
+            # simple as going through traversing through the treap and increasing the
+            # count from 0 whenever we find an element
             count = 0
             treap_iterator = self._TreapIterator(root)
             try:
@@ -139,11 +150,19 @@ class Treap:
 
     @classmethod
     def merge(cls, left_treap: Self, right_treap: Self) -> Self:
+        """
+        Takes in two Treaps and merges them into one
+        :return: A new Treap containing all the elements of left_treap and right_treap
+        """
         merged_root = cls._merge(left_treap.root, right_treap.root)
         return Treap(merged_root)
 
     @classmethod
     def _merge(cls, left_root: TreapNode | None, right_root: TreapNode | None) -> TreapNode | None:
+        """
+        Utility method for merging two Treaps given their roots.
+        :return: A TreapNode representing the root of the merged Treap.
+        """
         if not left_root:
             return right_root
         if not right_root:
