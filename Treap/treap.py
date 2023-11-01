@@ -1,5 +1,7 @@
 import random
 
+from Treap.stack import Stack
+
 
 class TreapNode:
     def __init__(self, key):
@@ -10,9 +12,38 @@ class TreapNode:
 
 
 class Treap:
+    class _TreapIterator:
+        def __init__(self, root: TreapNode | None):
+            self._stack = Stack[TreapNode]()
+            self._traverse_to_min_node(root)
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self._stack.is_empty():
+                raise StopIteration
+            else:
+                node = self._stack.pop()
+                key = node.key
+                if node.right is not None:
+                    self._traverse_to_min_node(node.right)
+                return key
+
+        def _traverse_to_min_node(self, root: TreapNode | None):
+            if root is not None:
+                self._stack.push(root)
+                self._traverse_to_min_node(root.left)
+
     def __init__(self):
         self.root = None
         self._size = 0
+
+    def __len__(self):
+        return self._size
+
+    def size(self):
+        return self._size
 
     @classmethod
     def _left_rotation(cls, x):
@@ -103,7 +134,6 @@ class Treap:
             return right
 
     def _search(self, root, key):
-
         if root is None or root.key == key:
             return root
         if key < root.key:
@@ -152,11 +182,11 @@ class Treap:
             print()
             self.inorder(root.right)
 
-    def size(self):
-        return self._size
-
     def is_empty(self):
         return self.size() == 0
+
+    def __iter__(self):
+        return self._TreapIterator(self.root)
 
 
 if __name__ == "__main__":
