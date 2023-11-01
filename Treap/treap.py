@@ -1,7 +1,7 @@
 import random
 
 
-class TreepNode:
+class TreapNode:
     def __init__(self, key):
         self.key = key
         self.priority = random.randint(0, 99)
@@ -14,7 +14,8 @@ class Treap:
         self.root = None
         self._size = 0
 
-    def _left_rotation(self, x):
+    @classmethod
+    def _left_rotation(cls, x):
         y = x.right
         t2 = y.left
 
@@ -23,7 +24,8 @@ class Treap:
 
         return y
 
-    def _right_rotation(self, y):
+    @classmethod
+    def _right_rotation(cls, y):
         x = y.left
         t2 = x.right
 
@@ -34,7 +36,7 @@ class Treap:
 
     def _insert(self, root, key):
         if root is None:
-            root = TreepNode(key)
+            root = TreapNode(key)
             self._size += 1
             return root
 
@@ -109,12 +111,14 @@ class Treap:
         elif key > root.key:
             return self._search(root.right, key)
 
-    def _min(self, root):
+    @classmethod
+    def _min(cls, root):
         while root and root.left:
             root = root.left
         return root
 
-    def _max(self, root):
+    @classmethod
+    def _max(cls, root):
         while root and root.right:
             root = root.right
         return root
@@ -156,30 +160,30 @@ class Treap:
 
 
 if __name__ == "__main__":
-    mytreep = Treap()
-    mytreep.insert(10)
-    mytreep.insert(20)
-    mytreep.insert(30)
-    mytreep.insert(40)
-    mytreep.insert(50)
-    mytreep.insert(60)
-    mytreep.inorder(mytreep.root)
+    my_treap = Treap()
+    my_treap.insert(10)
+    my_treap.insert(20)
+    my_treap.insert(30)
+    my_treap.insert(40)
+    my_treap.insert(50)
+    my_treap.insert(60)
+    my_treap.inorder(my_treap.root)
 
-    left, right = mytreep.split(40)
+    left, right = my_treap.split(40)
 
     print(f"Left : {left.key} and Right: {right.key}")
 
-    data = mytreep.merge(left, right)
+    data = my_treap.merge(left, right)
 
     print(f"Data : {data.key}")
 
-    # print(f"{mytreep.search(10)}")
-    # print(f"{mytreep.search(20)}")
-    # print(f"{mytreep.search(30)}")
-    # print(f"{mytreep.search(40)}")
-    # print(f"{mytreep.search(50)}")
-    # print(f"{mytreep.search(60)}")
-    # print(f"{mytreep.search(100)}")
+    # print(f"{my_treap.search(10)}")
+    # print(f"{my_treap.search(20)}")
+    # print(f"{my_treap.search(30)}")
+    # print(f"{my_treap.search(40)}")
+    # print(f"{my_treap.search(50)}")
+    # print(f"{my_treap.search(60)}")
+    # print(f"{my_treap.search(100)}")
     #
-    # print(f"{mytreep.max().key}")
-    # print(f"{mytreep.min().key}")
+    # print(f"{my_treap.max().key}")
+    # print(f"{my_treap.min().key}")
