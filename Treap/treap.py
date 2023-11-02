@@ -1,6 +1,6 @@
 import random
 
-from typing_extensions import Self
+from typing import Self
 
 from Treap.stack import Stack
 
@@ -240,13 +240,7 @@ if __name__ == "__main__":
 
     left, right = my_treap.split(40)
 
-    print(f"Left : {left.key} and Right: {right.key}")
-
-    data = my_treap.merge(left, right)
-
-    print(f"Data : {data.key}")
-
-    # print(f"{my_treap.search(10)}")
+    print(f"{my_treap.search(10)}")
     # print(f"{my_treap.search(20)}")
     # print(f"{my_treap.search(30)}")
     # print(f"{my_treap.search(40)}")
