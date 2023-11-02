@@ -1,7 +1,11 @@
 import random
 
+from typing import Self
 
-class TreepNode:
+from Treap.stack import Stack
+
+
+class TreapNode:
     def __init__(self, key):
         self.key = key
         self.priority = random.randint(0, 99)
@@ -10,11 +14,63 @@ class TreepNode:
 
 
 class Treap:
-    def __init__(self):
-        self.root = None
-        self._size = 0
+    class _TreapIterator:
+        def __init__(self, root: TreapNode | None):
+            self._stack = Stack[TreapNode]()
+            self._traverse_to_min_node(root)
 
-    def _left_rotation(self, x):
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            if self._stack.is_empty():
+                raise StopIteration
+            else:
+                node = self._stack.pop()
+                key = node.key
+                if node.right is not None:
+                    self._traverse_to_min_node(node.right)
+                return key
+
+        def _traverse_to_min_node(self, root: TreapNode | None):
+            if root is not None:
+                self._stack.push(root)
+                self._traverse_to_min_node(root.left)
+
+    def __init__(self, root: TreapNode | None = None):
+        """
+        Creates a new Treap.
+
+        The additional optional parameter is used by
+        the split and merge methods to create new a Treap
+        from a given root node.
+        This parameter is not to be filled in by client code
+        """
+        self.root = root
+        if self.root is not None:
+            # Calculating the length of a Treap given a root node is as
+            # simple as going through traversing through the treap and increasing the
+            # count from 0 whenever we find an element
+            count = 0
+            treap_iterator = self._TreapIterator(root)
+            try:
+                while True:
+                    treap_iterator.__next__()
+                    count += 1
+            except StopIteration:
+                pass
+            self._size = count
+        else:
+            self._size = 0
+
+    def __len__(self):
+        return self._size
+
+    def size(self):
+        return self._size
+
+    @classmethod
+    def _left_rotation(cls, x):
         y = x.right
         t2 = y.left
 
@@ -23,7 +79,8 @@ class Treap:
 
         return y
 
-    def _right_rotation(self, y):
+    @classmethod
+    def _right_rotation(cls, y):
         x = y.left
         t2 = x.right
 
@@ -34,7 +91,7 @@ class Treap:
 
     def _insert(self, root, key):
         if root is None:
-            root = TreepNode(key)
+            root = TreapNode(key)
             self._size += 1
             return root
 
@@ -74,6 +131,10 @@ class Treap:
         self._size -= 1
         return root
 
+    def split(self, key) -> tuple[Self, Self]:
+        left, right = self._split(self.root, key)
+        return Treap(left), Treap(right)
+
     def _split(self, root, key):
         if root is None:
             return None, None
@@ -87,21 +148,34 @@ class Treap:
             root.right = left
             return root, right
 
-    def merge(self, left, right):
-        if not left:
-            return right
-        if not right:
-            return left
+    @classmethod
+    def merge(cls, left_treap: Self, right_treap: Self) -> Self:
+        """
+        Takes in two Treaps and merges them into one
+        :return: A new Treap containing all the elements of left_treap and right_treap
+        """
+        merged_root = cls._merge(left_treap.root, right_treap.root)
+        return Treap(merged_root)
 
-        if left.priority > right.priority:
-            left.right = self.merge(left.right, right)
-            return left
+    @classmethod
+    def _merge(cls, left_root: TreapNode | None, right_root: TreapNode | None) -> TreapNode | None:
+        """
+        Utility method for merging two Treaps given their roots.
+        :return: A TreapNode representing the root of the merged Treap.
+        """
+        if not left_root:
+            return right_root
+        if not right_root:
+            return left_root
+
+        if left_root.priority > right_root.priority:
+            left_root.right = cls._merge(left_root.right, right_root)
+            return left_root
         else:
-            right.left = self.merge(left, right.left)
-            return right
+            right_root.left = cls._merge(left_root, right_root.left)
+            return right_root
 
     def _search(self, root, key):
-
         if root is None or root.key == key:
             return root
         if key < root.key:
@@ -109,12 +183,14 @@ class Treap:
         elif key > root.key:
             return self._search(root.right, key)
 
-    def _min(self, root):
+    @classmethod
+    def _min(cls, root):
         while root and root.left:
             root = root.left
         return root
 
-    def _max(self, root):
+    @classmethod
+    def _max(cls, root):
         while root and root.right:
             root = root.right
         return root
@@ -124,9 +200,6 @@ class Treap:
 
     def delete(self, key):
         self.root = self._delete(self.root, key)
-
-    def split(self, key):
-        return self._split(self.root, key)
 
     def search(self, key):
         return self._search(self.root, key)
@@ -148,38 +221,32 @@ class Treap:
             print()
             self.inorder(root.right)
 
-    def size(self):
-        return self._size
-
     def is_empty(self):
         return self.size() == 0
 
+    def __iter__(self):
+        return self._TreapIterator(self.root)
+
 
 if __name__ == "__main__":
-    mytreep = Treap()
-    mytreep.insert(10)
-    mytreep.insert(20)
-    mytreep.insert(30)
-    mytreep.insert(40)
-    mytreep.insert(50)
-    mytreep.insert(60)
-    mytreep.inorder(mytreep.root)
+    my_treap = Treap()
+    my_treap.insert(10)
+    my_treap.insert(20)
+    my_treap.insert(30)
+    my_treap.insert(40)
+    my_treap.insert(50)
+    my_treap.insert(60)
+    my_treap.inorder(my_treap.root)
 
-    left, right = mytreep.split(40)
+    left, right = my_treap.split(40)
 
-    print(f"Left : {left.key} and Right: {right.key}")
-
-    data = mytreep.merge(left, right)
-
-    print(f"Data : {data.key}")
-
-    # print(f"{mytreep.search(10)}")
-    # print(f"{mytreep.search(20)}")
-    # print(f"{mytreep.search(30)}")
-    # print(f"{mytreep.search(40)}")
-    # print(f"{mytreep.search(50)}")
-    # print(f"{mytreep.search(60)}")
-    # print(f"{mytreep.search(100)}")
+    print(f"{my_treap.search(10)}")
+    # print(f"{my_treap.search(20)}")
+    # print(f"{my_treap.search(30)}")
+    # print(f"{my_treap.search(40)}")
+    # print(f"{my_treap.search(50)}")
+    # print(f"{my_treap.search(60)}")
+    # print(f"{my_treap.search(100)}")
     #
-    # print(f"{mytreep.max().key}")
-    # print(f"{mytreep.min().key}")
+    # print(f"{my_treap.max().key}")
+    # print(f"{my_treap.min().key}")
