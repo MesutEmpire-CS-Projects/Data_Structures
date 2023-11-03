@@ -226,33 +226,3 @@ class Treap:
 
     def __iter__(self):
         return self._TreapIterator(self.root)
-
-
-if __name__ == "__main__":
-    my_treap = Treap()
-    my_treap.insert(10)
-    my_treap.insert(20)
-    my_treap.insert(30)
-    my_treap.insert(40)
-    my_treap.insert(50)
-    my_treap.insert(60)
-    my_treap.inorder(my_treap.root)
-
-    left, right = my_treap.split(40)
-
-    print(f"Left : {left.key} and Right: {right.key}")
-
-    data = my_treap.merge(left, right)
-
-    print(f"Data : {data.key}")
-
-    # print(f"{my_treap.search(10)}")
-    # print(f"{my_treap.search(20)}")
-    # print(f"{my_treap.search(30)}")
-    # print(f"{my_treap.search(40)}")
-    # print(f"{my_treap.search(50)}")
-    # print(f"{my_treap.search(60)}")
-    # print(f"{my_treap.search(100)}")
-    #
-    # print(f"{my_treap.max().key}")
-    # print(f"{my_treap.min().key}")
