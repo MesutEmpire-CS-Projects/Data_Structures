@@ -1,6 +1,6 @@
 import random
 
-from typing_extensions import Self
+from typing import Self
 
 from Treap.stack import Stack
 
