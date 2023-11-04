@@ -94,10 +94,16 @@ class StudentGroupMaker(Treap):
         """
         Creates a csv file (grouped.csv) in the current directory
         populated with the groups that each student is placed.
+        The students will be arranged in random order.
         Last group may have fewer members.
         """
+        # This achieves randomization by performing an preorder traversal through the treap
+        # in which it stores the info. Since the items are inserted with random priority
+        # and the treap gets shifted many times as elements are inserted to it, there is a very
+        # small chance that the order in the output file will be the same as it was in the input file
 
         # TODO: Handle the adding the members of incomplete groups to random groups
+
         student_counter = 0
         group = 0
         with open(self.OUTPUT_FILE, "w") as output:
