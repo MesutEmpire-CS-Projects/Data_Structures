@@ -7,7 +7,7 @@ from Treap.stack import Stack
 class TreapNode:
     def __init__(self, key):
         self.key = key
-        self.priority = random.randint(0, 99)
+        self.priority = random.random()
         self.left = None
         self.right = None
 
@@ -104,7 +104,7 @@ class Treap:
             if root.right.priority > root.priority:
                 root = self._left_rotation(root)
         else:
-            raise Exception('No duplicates allowed')
+            raise Exception('No duplicates allowed', key, root.key)
 
         return root
 
