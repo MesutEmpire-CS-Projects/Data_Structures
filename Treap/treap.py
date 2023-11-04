@@ -37,6 +37,9 @@ class Treap:
                 self._stack.push(root)
                 self._traverse_to_min_node(root.left)
 
+    class DuplicateKeyException(Exception):
+        pass
+
     def __init__(self, root: TreapNode | None = None):
         """
         Creates a new Treap.
@@ -104,7 +107,7 @@ class Treap:
             if root.right.priority > root.priority:
                 root = self._left_rotation(root)
         else:
-            raise Exception('No duplicates allowed', key, root.key)
+            raise self.DuplicateKeyException('No duplicates allowed', key, root.key)
 
         return root
 
