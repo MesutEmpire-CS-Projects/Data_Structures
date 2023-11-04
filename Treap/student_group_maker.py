@@ -43,6 +43,9 @@ class StudentGroupMaker(Treap):
     class InvalidFileException(Exception):
         pass
 
+    class InvalidShapeException(Exception):
+        pass
+
     def __init__(self, file_name: Union[str | os.PathLike | bytes]):
         """
         Creates a new student group maker from the file given.
@@ -53,7 +56,25 @@ class StudentGroupMaker(Treap):
         if not self.file_name.endswith(".csv"):
             raise self.InvalidFileException("Expected a .csv file")
 
-        self.populate_from_file()
+        if self.file_has_desired_shape():
+            self.populate_from_file()
+
+    def file_has_desired_shape(self) -> bool:
+        """
+        Tests whether the file has a valid shape, in this case, whether it
+        consists of two columns all through.
+        May also include test to see whether all the items in the reg no column are
+        registration numbers, but that seems overkill
+        """
+        with open(self.file_name) as file:
+            i = 0
+            for line in file.readlines():
+                # Confirm that the groups column has been created
+                if len(line.split(",")) != 2:
+                    raise self.InvalidShapeException("The file should only have two columns, name and reg.no")
+                i += 1
+
+        return True
 
     def populate_from_file(self):
         """Adds student names and registration numbers from a file"""
@@ -75,6 +96,8 @@ class StudentGroupMaker(Treap):
         populated with the groups that each student is placed.
         Last group may have fewer members.
         """
+
+        # TODO: Handle the adding the members of incomplete groups to random groups
         student_counter = 0
         group = 0
         with open(self.OUTPUT_FILE, "w") as output:
