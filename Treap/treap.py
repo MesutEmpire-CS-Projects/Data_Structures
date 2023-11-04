@@ -1,5 +1,4 @@
 import random
-
 from typing import Self
 
 from Treap.stack import Stack
@@ -15,6 +14,7 @@ class TreapNode:
 
 class Treap:
     class _TreapIterator:
+        """This iterator follows an inorder traversal over the keys of a treap"""
         def __init__(self, root: TreapNode | None):
             self._stack = Stack[TreapNode]()
             self._traverse_to_min_node(root)
@@ -220,6 +220,27 @@ class Treap:
                 print(" | right child:", root.right.key, end="")
             print()
             self.inorder(root.right)
+
+    @classmethod
+    def _preorder(cls, root: TreapNode | None):
+        """
+        Utility method that creates a generator object for preorder traversal.
+        Having a generator is memory-efficient as values are lazily returned
+        :returns: A generator that can be used to for a
+                preorder traversal through the treap rooted at root
+        """
+        if root is not None:
+            yield root.key
+            yield from cls._preorder(root.left)
+            yield from cls._preorder(root.right)
+
+    def preorder(self):
+        """
+        User method for performing a preorder traversal
+        :returns: A generator that can be used to for a
+                preorder traversal through the treap's keys
+        """
+        return self._preorder(self.root)
 
     def is_empty(self):
         return self.size() == 0
