@@ -20,9 +20,13 @@ class TestConstructor(unittest.TestCase):
         with self.assertRaises(IOError):
             StudentGroupMaker("./file1.csv")
 
-    @unittest.skip("Not yet implemented")
     def test_with_csv_containing_duplicate_reg_no(self):
-        pass
+        with self.assertRaises(StudentGroupMaker.DuplicateKeyException):
+            StudentGroupMaker("./containing_duplicates.csv")
+
+    def test_with_csv_with_invalid_shape(self):
+        with self.assertRaises(StudentGroupMaker.InvalidShapeException):
+            StudentGroupMaker("./invalid_shape.csv")
 
 
 class TestMakeGroupsMethod(unittest.TestCase):
@@ -30,7 +34,7 @@ class TestMakeGroupsMethod(unittest.TestCase):
         group_maker = StudentGroupMaker("file.csv")
         group_maker.make_groups(5)
 
-        with open("grouped.csv") as file:
+        with open("grouped.csv"):
             pass
 
     def test_output_file_valid(self):
@@ -44,7 +48,7 @@ class TestMakeGroupsMethod(unittest.TestCase):
             for line in file.readlines():
                 with self.subTest(line=i):
                     # Confirm that the groups column has been created
-                    self.assertEqual(3, len(file.readline().split(",")))
+                    self.assertEqual(3, len(line.split(",")))
                     i += 1
 
 
