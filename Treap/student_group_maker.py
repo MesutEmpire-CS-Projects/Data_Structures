@@ -101,9 +101,11 @@ class StudentGroupMaker(Treap):
         """
         Creates a csv file (grouped.csv) in the current directory
         populated with the groups that each student is placed.
-        The students will be arranged in the order decided by the mode parameter, which,
-        by default, is random. The arrangement is with reference to the registration numbers.
-        Last group may have fewer members.
+        Last group may have fewer members
+        :param mode: Determines the order in which the students will be arranged, which,
+            by default, is random. The arrangement is with reference to the registration numbers.
+        :param students_per_group: Denotes the number of students each group will have.
+                Will put all the students into one group if it is greater than the number of students in the file
         """
         # This achieves randomization by performing a preorder traversal through the treap
         # in which it stores the info. Since the items are inserted with random priority
