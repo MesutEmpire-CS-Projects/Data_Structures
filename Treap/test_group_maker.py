@@ -34,15 +34,14 @@ class TestMakeGroupsMethod(unittest.TestCase):
         group_maker = StudentGroupMaker("file.csv")
         group_maker.make_groups(5)
 
-        with open("grouped.csv"):
+        with open(StudentGroupMaker.OUTPUT_FILE):
             pass
 
     def test_output_file_valid(self):
-        # TODO: Make this test more granular
         group_maker = StudentGroupMaker("file.csv")
         group_maker.make_groups(5)
 
-        with open("grouped.csv") as file:
+        with open(StudentGroupMaker.OUTPUT_FILE) as file:
             self.assertEqual(len(group_maker) + 1, len(file.readlines()))
             i = 0
             for line in file.readlines():
@@ -51,9 +50,16 @@ class TestMakeGroupsMethod(unittest.TestCase):
                     self.assertEqual(3, len(line.split(",")))
                     i += 1
 
-    def test_group_modes(self):
+    def test_ascending_and_descending_group_modes(self):
+        """
+        This test is designed to work for when the number of students per group
+        is cleanly divisible by the number of students as it compares the current and
+        the next values to see whether they obey the required relationship.
+        This cannot work with those that are not as we re-insert them to the
+        list at different positions.
+        """
         group_maker = StudentGroupMaker("file.csv")
-        group_maker.make_groups(5, GroupMode.ASCENDING)
+        group_maker.make_groups(2, GroupMode.ASCENDING)
 
         with self.subTest(group_mode=GroupMode.ASCENDING):
             with open(StudentGroupMaker.OUTPUT_FILE) as file:
@@ -64,7 +70,7 @@ class TestMakeGroupsMethod(unittest.TestCase):
                         (_, next_reg, _) = self._split_output_line(lines[i + 1])
                         self.assertTrue(current_reg < next_reg)
 
-        group_maker.make_groups(5, GroupMode.DESCENDING)
+        group_maker.make_groups(2, GroupMode.DESCENDING)
 
         with self.subTest(group_mode=GroupMode.DESCENDING):
             with open(StudentGroupMaker.OUTPUT_FILE) as file:
