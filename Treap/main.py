@@ -1,6 +1,8 @@
 """
 Rough driver code for a student group maker
 """
+import os
+
 from Treap.student_group_maker import StudentGroupMaker, GroupMode
 
 
@@ -44,7 +46,7 @@ def main():
         exit(6)
 
     group_maker.make_groups(students_per_group, group_mode)
-    print(f"The file with groups is at ./{StudentGroupMaker.OUTPUT_FILE}")
+    print(f"The file with groups is at .{os.sep}{StudentGroupMaker.OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
