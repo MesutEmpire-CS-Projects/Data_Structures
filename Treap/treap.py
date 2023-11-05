@@ -1,4 +1,5 @@
 import random
+
 from typing import Self
 
 from Treap.stack import Stack
@@ -250,3 +251,4 @@ class Treap:
 
     def __iter__(self):
         return self._TreapIterator(self.root)
+
