@@ -11,14 +11,17 @@ def main():
     try:
         group_maker = StudentGroupMaker(path)
     except IOError:
-        print(f"The file {path}, cannot be opened. Please check if name is typed correctly")
+        print(f"The file at '{path}', cannot be opened. Please check if the path is typed correctly")
         exit(1)
     except StudentGroupMaker.InvalidFileException:
-        print("The file must be a csv file")
+        print(f"The file at '{path}' is not a csv file")
         exit(2)
     except StudentGroupMaker.DuplicateKeyException:
         print("The file has duplicate registration numbers. Please correct this first.")
         exit(3)
+    except StudentGroupMaker.InvalidShapeException as e:
+        print(e.args[0])
+        exit(4)
 
     try:
         students_per_group = int(input("Enter the number of students per group: "))
@@ -33,12 +36,12 @@ def main():
             group_mode = GroupMode(group_mode_input)
         else:
             print("Invalid choice. Please choose 1, 2 or 3 for group mode")
-            exit(4)
+            exit(5)
 
     except ValueError:
         # TODO: Handle this case appropriately, probably by forcing a loop until a valid value is entered
         print("Please enter a valid number")
-        exit(5)
+        exit(6)
 
     group_maker.make_groups(students_per_group, group_mode)
     print(f"The file with groups is at ./{StudentGroupMaker.OUTPUT_FILE}")
