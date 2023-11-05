@@ -70,7 +70,7 @@ class TestMakeGroupsMethod(unittest.TestCase):
             with open(StudentGroupMaker.OUTPUT_FILE) as file:
                 lines = file.readlines()
                 for i in range(1, len(lines) - 1):
-                    with self.subTest(current_reg=lines[i], next_reg=lines[i + 1]):
+                    with self.subTest(line_number=i):
                         (_, current_reg, _) = self._split_output_line(lines[i])
                         (_, next_reg, _) = self._split_output_line(lines[i + 1])
                         self.assertTrue(current_reg > next_reg)
