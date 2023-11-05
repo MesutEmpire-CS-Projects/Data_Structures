@@ -6,6 +6,7 @@ from Treap.student_group_maker import StudentGroupMaker, GroupMode
 
 def main():
     print("Student Group Maker")
+    print("-" * 20)
     path = input("Enter the path to the student information file: ")
     try:
         group_maker = StudentGroupMaker(path)
