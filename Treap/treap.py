@@ -240,13 +240,3 @@ if __name__ == "__main__":
 
     left, right = my_treap.split(40)
 
-    print(f"{my_treap.search(10)}")
-    # print(f"{my_treap.search(20)}")
-    # print(f"{my_treap.search(30)}")
-    # print(f"{my_treap.search(40)}")
-    # print(f"{my_treap.search(50)}")
-    # print(f"{my_treap.search(60)}")
-    # print(f"{my_treap.search(100)}")
-    #
-    # print(f"{my_treap.max().key}")
-    # print(f"{my_treap.min().key}")
