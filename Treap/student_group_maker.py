@@ -1,7 +1,15 @@
 import os
+import random
+from enum import Enum, auto
 from typing import Union
 
-from Treap.treap import Treap
+from Treap.treap import Treap, TreapNode
+
+
+class GroupMode(Enum):
+    RANDOM = auto()
+    ASCENDING = auto()
+    DESCENDING = auto()
 
 
 class Student:
@@ -14,6 +22,7 @@ class Student:
     def __init__(self, name: str, reg_no: str):
         self.name = name
         self.reg_no = reg_no
+        self.group = 0  # Default group
 
     def __lt__(self, other):
         if isinstance(other, Student):
@@ -28,7 +37,7 @@ class Student:
             return self.name == other.name and self.reg_no == other.reg_no
 
     def __str__(self):
-        return f"Student({self.name}, {self.reg_no})"
+        return f"Student({self.name}, {self.reg_no}, {self.group})"
 
     def __repr__(self):
         return f"Student({self.name}, {self.reg_no})"
@@ -90,30 +99,77 @@ class StudentGroupMaker(Treap):
 
                 index += 1
 
-    def make_groups(self, students_per_group: int):
+    def make_groups(self, students_per_group: int, mode: GroupMode = GroupMode.RANDOM):
         """
         Creates a csv file (grouped.csv) in the current directory
         populated with the groups that each student is placed.
-        The students will be arranged in random order.
-        Last group may have fewer members.
+        Groups differ in length by at most 1 member
+        :param mode: Determines the order in which the students will be arranged, which,
+            by default, is random (but not really random).
+            The arrangement is with reference to the registration numbers.
+        :param students_per_group: Denotes the number of students each group_number will have.
+                Will put all the students into one group_number if it is greater
+                than the number of students in the file
         """
-        # This achieves randomization by performing an preorder traversal through the treap
+        # This achieves randomization by performing a preorder traversal through the treap
         # in which it stores the info. Since the items are inserted with random priority
         # and the treap gets shifted many times as elements are inserted to it, there is a very
         # small chance that the order in the output file will be the same as it was in the input file
-
-        # TODO: Handle the adding the members of incomplete groups to random groups
+        if students_per_group <= 0:
+            raise ValueError("The value of students_per_group must be a positive integer")
 
         student_counter = 0
-        group = 0
-        with open(self.OUTPUT_FILE, "w") as output:
-            output.write("NAME,REG NO,GROUP\n")
-            for student in self.preorder():
-                if student_counter % students_per_group == 0:
-                    group += 1
+        # Equals to the number of complete groups + 1
+        # in the case of an oddly divisible students_per_group
+        group_number = 0
 
-                output.write(f"{student.name},{student.reg_no},{group}\n")
-                student_counter += 1
+        iterator = random.choice([self.preorder(), self._postorder(self.root)])
+        match mode:
+            case GroupMode.RANDOM:
+                pass  # Already set to self.preorder()
+            case GroupMode.ASCENDING:
+                iterator = self.__iter__()
+            case GroupMode.DESCENDING:
+                iterator = self._inorder_reverse(self.root)
+
+        student_list: list[Student] = []
+        for student in iterator:
+            if student_counter % students_per_group == 0:
+                group_number += 1
+
+            student.group = group_number
+            student_list.append(student)
+            student_counter += 1
+
+        # Handle the adding the members of incomplete groups to random groups
+        students_remaining = student_counter % students_per_group
+
+        if 0 < students_remaining < students_per_group - 1:
+            new_group = random.randrange(1, group_number)
+            for i in range(students_remaining):
+                student_list[(student_counter - 1) - i].group = new_group
+                new_group += 1
+                if new_group >= group_number:
+                    new_group = 1
+
+            student_list = sorted(student_list, key=lambda s: s.group)
+
+        with open(self.OUTPUT_FILE, "w") as output_file:
+            output_file.write(f"NAME,REG NO,GROUP\n")
+            for student in student_list:
+                output_file.write(f"{student.name},{student.reg_no},{student.group}\n")
+
+    def _inorder_reverse(self, root: TreapNode):
+        if root is not None:
+            yield from self._inorder_reverse(root.right)
+            yield root.key
+            yield from self._inorder_reverse(root.left)
+
+    def _postorder(self, root: TreapNode):
+        if root is not None:
+            yield from self._inorder_reverse(root.left)
+            yield from self._inorder_reverse(root.right)
+            yield root.key
 
     def number_of_students(self):
         return len(self)

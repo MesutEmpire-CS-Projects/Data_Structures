@@ -1,6 +1,6 @@
 import unittest
 
-from Treap.student_group_maker import StudentGroupMaker
+from Treap.student_group_maker import StudentGroupMaker, GroupMode
 
 
 class TestConstructor(unittest.TestCase):
@@ -34,15 +34,14 @@ class TestMakeGroupsMethod(unittest.TestCase):
         group_maker = StudentGroupMaker("file.csv")
         group_maker.make_groups(5)
 
-        with open("grouped.csv"):
+        with open(StudentGroupMaker.OUTPUT_FILE):
             pass
 
     def test_output_file_valid(self):
-        # TODO: Make this test more granular
         group_maker = StudentGroupMaker("file.csv")
         group_maker.make_groups(5)
 
-        with open("grouped.csv") as file:
+        with open(StudentGroupMaker.OUTPUT_FILE) as file:
             self.assertEqual(len(group_maker) + 1, len(file.readlines()))
             i = 0
             for line in file.readlines():
@@ -50,6 +49,43 @@ class TestMakeGroupsMethod(unittest.TestCase):
                     # Confirm that the groups column has been created
                     self.assertEqual(3, len(line.split(",")))
                     i += 1
+
+    def test_ascending_and_descending_group_modes(self):
+        """
+        This test is designed to work for when the number of students per group
+        is cleanly divisible by the number of students as it compares the current and
+        the next values to see whether they obey the required relationship.
+        This cannot work with those that are not as we re-insert them to the
+        list at different positions.
+        """
+        group_maker = StudentGroupMaker("file.csv")
+        group_maker.make_groups(2, GroupMode.ASCENDING)
+
+        with self.subTest(group_mode=GroupMode.ASCENDING):
+            with open(StudentGroupMaker.OUTPUT_FILE) as file:
+                lines = file.readlines()
+                for i in range(1, len(lines) - 1):
+                    with self.subTest(line_number=i):
+                        (_, current_reg, _) = self._split_output_line(lines[i])
+                        (_, next_reg, _) = self._split_output_line(lines[i + 1])
+                        self.assertTrue(current_reg < next_reg)
+
+        group_maker.make_groups(2, GroupMode.DESCENDING)
+
+        with self.subTest(group_mode=GroupMode.DESCENDING):
+            with open(StudentGroupMaker.OUTPUT_FILE) as file:
+                lines = file.readlines()
+                for i in range(1, len(lines) - 1):
+                    with self.subTest(line_number=i):
+                        (_, current_reg, _) = self._split_output_line(lines[i])
+                        (_, next_reg, _) = self._split_output_line(lines[i + 1])
+                        self.assertTrue(current_reg > next_reg)
+
+    @staticmethod
+    def _split_output_line(line: str) -> (str, str, str):
+        (name, reg_no, group) = line.replace("\n", "").split(",")
+
+        return name, reg_no, group
 
 
 if __name__ == '__main__':
