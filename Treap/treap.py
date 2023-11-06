@@ -22,6 +22,17 @@ class Treap:
         def __iter__(self):
             return self
 
+        # def __next__(self):
+        #     if self._stack.is_empty():
+        #         raise StopIteration
+        #     else:
+        #         node = self._stack.pop()
+        #         key = node.key
+        #         if node.right is not None:
+        #             self._traverse_to_min_node(node.right)
+        #         return key
+        #
+
         def __next__(self):
             if self._stack.is_empty():
                 raise StopIteration
@@ -30,7 +41,7 @@ class Treap:
                 key = node.key
                 if node.right is not None:
                     self._traverse_to_min_node(node.right)
-                return key
+                return {"key": key, "priority": node.priority}
 
         def _traverse_to_min_node(self, root: TreapNode | None):
             if root is not None:
@@ -239,4 +250,3 @@ if __name__ == "__main__":
     my_treap.inorder(my_treap.root)
 
     left, right = my_treap.split(40)
-

@@ -58,11 +58,12 @@ class Groupmaking(Treap):
         print(f"{self.csv_file_path}")
         if self.root is not None:
             with open(self.csv_file_path, 'w', newline='') as file:
-                fieldnames = ['NAME', 'REG NO']
+                fieldnames = ['NAME', 'PRIORITY']
                 writer = csv.DictWriter(file, fieldnames=fieldnames)
                 writer.writeheader()
 
                 for student in self:
-                    writer.writerow({'NAME': student})
+                    print(f"Student : {student}")
+                    writer.writerow({'NAME': student['key'], "PRIORITY": student['priority']})
         else:
             print("Treap is empty. No data to save to the CSV file.")
