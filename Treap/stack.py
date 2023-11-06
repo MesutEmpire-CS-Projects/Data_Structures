@@ -1,5 +1,5 @@
-from typing import Generic, TypeVar
-from typing import Self
+
+from typing import Generic, TypeVar, Self
 
 T = TypeVar("T")
 

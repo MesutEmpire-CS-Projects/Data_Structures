@@ -43,6 +43,14 @@ class TestTreapMethods(unittest.TestCase):
         merged_treap = Treap.merge(left_treap, right_treap)
         self.assertEqual(len(merged_treap), len(left_treap) + len(right_treap))
 
+    def test_preorder_generator(self):
+        count = 0
+        for value in self.my_treap.preorder():
+            print(value)
+            count += 1
+
+        self.assertEqual(len(self.my_treap), count)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -8,13 +8,14 @@ from Treap.stack import Stack
 class TreapNode:
     def __init__(self, key):
         self.key = key
-        self.priority = random.randint(0, 99)
+        self.priority = random.random()
         self.left = None
         self.right = None
 
 
 class Treap:
     class _TreapIterator:
+        """This iterator follows an inorder traversal over the keys of a treap"""
         def __init__(self, root: TreapNode | None):
             self._stack = Stack[TreapNode]()
             self._traverse_to_min_node(root)
@@ -36,6 +37,9 @@ class Treap:
             if root is not None:
                 self._stack.push(root)
                 self._traverse_to_min_node(root.left)
+
+    class DuplicateKeyException(Exception):
+        pass
 
     def __init__(self, root: TreapNode | None = None):
         """
@@ -104,7 +108,7 @@ class Treap:
             if root.right.priority > root.priority:
                 root = self._left_rotation(root)
         else:
-            raise Exception('No duplicates allowed')
+            raise self.DuplicateKeyException('No duplicates allowed', key, root.key)
 
         return root
 
@@ -221,22 +225,29 @@ class Treap:
             print()
             self.inorder(root.right)
 
+    @classmethod
+    def _preorder(cls, root: TreapNode | None):
+        """
+        Utility method that creates a generator object for preorder traversal.
+        Having a generator is memory-efficient as values are lazily returned
+        :returns: A generator that can be used to for a
+                preorder traversal through the treap rooted at root
+        """
+        if root is not None:
+            yield root.key
+            yield from cls._preorder(root.left)
+            yield from cls._preorder(root.right)
+
+    def preorder(self):
+        """
+        User method for performing a preorder traversal
+        :returns: A generator that can be used to for a
+                preorder traversal through the treap's keys
+        """
+        return self._preorder(self.root)
+
     def is_empty(self):
         return self.size() == 0
 
     def __iter__(self):
         return self._TreapIterator(self.root)
-
-
-if __name__ == "__main__":
-    my_treap = Treap()
-    my_treap.insert(10)
-    my_treap.insert(20)
-    my_treap.insert(30)
-    my_treap.insert(40)
-    my_treap.insert(50)
-    my_treap.insert(60)
-    my_treap.inorder(my_treap.root)
-
-    left, right = my_treap.split(40)
-
