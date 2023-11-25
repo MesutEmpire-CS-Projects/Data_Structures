@@ -180,10 +180,16 @@ class Treap:
             return left_root
 
         if left_root.priority > right_root.priority:
-            left_root.right = cls._merge(left_root.right, right_root)
+            if right_root.key < left_root.key:
+                left_root.left = cls._merge(left_root.left, right_root)
+            else:
+                left_root.right = cls._merge(left_root.right, right_root)
             return left_root
         else:
-            right_root.left = cls._merge(left_root, right_root.left)
+            if right_root.key < left_root.key:
+                right_root.right = cls._merge(left_root, right_root.right)
+            else:
+                right_root.left = cls._merge(left_root, right_root.left)
             return right_root
 
     def _search(self, root, key):
@@ -240,13 +246,59 @@ class Treap:
 
 
 if __name__ == "__main__":
-    my_treap = Treap()
-    my_treap.insert(10)
-    my_treap.insert(20)
-    my_treap.insert(30)
-    my_treap.insert(40)
-    my_treap.insert(50)
-    my_treap.insert(60)
-    my_treap.inorder(my_treap.root)
+    left_treap = Treap()
+    left_treap.insert(20)
+    left_treap.insert(10)
+    left_treap.insert(30)
+    left_treap.insert(15)
+    left_treap.inorder(left_treap.root)
 
-    left, right = my_treap.split(40)
+    print('\n ------------ \n')
+
+    right_treap = Treap()
+    right_treap.insert(5)
+    right_treap.insert(2)
+    right_treap.insert(4)
+    right_treap.insert(11)
+    right_treap.inorder(right_treap.root)
+
+    print('\n ------------ \n')
+    print(' Merge')
+    merged_Treap = left_treap.merge(left_treap, right_treap)
+    print(' Merge Inorder :')
+    merged_Treap.inorder(merged_Treap.root)
+
+
+
+    # my_treap = Treap()
+    # # my_treap.insert(10)
+    # # my_treap.insert(20)
+    # # my_treap.insert(30)
+    # # my_treap.insert(40)
+    # # my_treap.insert(50)
+    # # my_treap.insert(60)
+    # my_treap.insert(1)
+    # my_treap.insert(-1)
+    # my_treap.insert(3)
+    # my_treap.insert(0)
+    # my_treap.insert(2)
+    # my_treap.insert(-3)
+    # my_treap.insert(4)
+    # my_treap.insert(-2)
+    # my_treap.inorder(my_treap.root)
+    #
+    # left, right = my_treap.split(3)
+    #
+    # print(f'Left Root :  {left.root.key}')
+    # print(f'Right Root :   {right.root.key}')
+    # print('\n ------------ \n')
+    # print(' Split')
+    # print(' Left Inorder :')
+    # left.inorder(left.root)
+    # print(' Right Inorder :')
+    # right.inorder(right.root)
+    # print('\n ------------ \n')
+    # print(' Merge')
+    # merged_Treap = left.merge(left, right)
+    # print(' Merge Inorder :')
+    # merged_Treap.inorder(merged_Treap.root)
