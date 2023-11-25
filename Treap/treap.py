@@ -173,10 +173,16 @@ class Treap:
             return left_root
 
         if left_root.priority > right_root.priority:
-            left_root.right = cls._merge(left_root.right, right_root)
+            if right_root.key < left_root.key:
+                left_root.left = cls._merge(left_root.left, right_root)
+            else:
+                left_root.right = cls._merge(left_root.right, right_root)
             return left_root
         else:
-            right_root.left = cls._merge(left_root, right_root.left)
+            if right_root.key < left_root.key:
+                right_root.right = cls._merge(left_root, right_root.right)
+            else:
+                right_root.left = cls._merge(left_root, right_root.left)
             return right_root
 
     def _search(self, root, key):
